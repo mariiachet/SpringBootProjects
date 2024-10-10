@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <title>Редактировать информацию о машине</title>
+    <header th:replace="index :: head"></header>
+</head>
+<body>
+<div class="container-fluid p-5 bg-gradient bg-secondary" style="min-height: 100vh; overflow: auto; --bs-bg-opacity: .5;">
+    <blockquote class="blockquote text-center">
+        <h1>Редактирование информации о машине</h1>
+    </blockquote>
+    <div class="row">
+        <div class="col-md-8 offset-md-4">
+            <form action="#" th:action="@{/save}" th:object="${car}" method="post">
+                <table>
+                    <tr>
+                        <td>ID машины:</td>
+                        <td><input type="text" th:field="*{id}" readonly="readonly"></td>
+                    </tr>
+                    <tr>
+                        <td>Марка:</td>
+                        <td><input type="text" th:field="*{brand}"></td>
+                    </tr>
+                    <tr>
+                        <td>Год выпуска:</td>
+                        <td><input type="text" th:field="*{yearOfProduction}"></td>
+                    </tr>
+                    <tr>
+                        <td>Дата постановки на учет:</td>
+                        <td><input type="text" th:field="*{regDate}"></td>
+                    </tr>
+                    <tr>
+                        <td>ФИО владельца:</td>
+                        <td><input type="text" th:field="*{ownerName}"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <button type="submit" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">Отправить</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
