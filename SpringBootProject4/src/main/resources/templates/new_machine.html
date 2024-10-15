@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <title>Добавить технику</title>
+</head>
+<header th:replace="index :: head"></header>
+<body>
+<div class="container-fluid p-5 bg-gradient bg-secondary" style="min-height: 100vh; overflow: auto; --bs-bg-opacity: .5;">
+    <blockquote class="blockquote text-center">
+        <h1>Добавить технику</h1>
+    </blockquote>
+    <div class="row">
+        <div class="col-md-8 offset-md-4">
+            <form th:action="@{/save}" th:object="${machine}" method="post">
+                <table>
+                    <tr>
+                        <td>ID техники:</td>
+                        <td><input type="text" th:field="*{id}" readonly="readonly"></td>
+                    </tr>
+                    <tr>
+                        <td>Вид техники:</td>
+                        <td><input type="text" th:field="*{equipmentType}" required></td>
+                    </tr>
+                    <tr>
+                        <td>Группа техники:</td>
+                        <td><input type="text" th:field="*{equipmentGroup}" required></td>
+                    </tr>
+                    <tr>
+                        <td>Дата ввоза на склад:</td>
+                        <td><input type="datetime-local" th:field="*{importDate}" required></td>
+                    </tr>
+                    <tr>
+                        <td>Дата вывоза со склада:</td>
+                        <td><input type="datetime-local" th:field="*{exportDate}"></td>
+                    </tr>
+                    <tr>
+                        <td>ФИО водителя:</td>
+                        <td><input type="text" th:field="*{driverFullName}" required></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button type="submit" class="btn btn-primary" aria-pressed="false" autocomplete="off">Сохранить</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

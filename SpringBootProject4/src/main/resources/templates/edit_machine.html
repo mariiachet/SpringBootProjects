@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <title>Редактировать информацию о технике</title>
+    <header th:replace="index :: head"></header>
+</head>
+<body>
+<div class="container-fluid p-5 bg-gradient bg-secondary" style="min-height: 100vh; overflow: auto; --bs-bg-opacity: .5;">
+    <blockquote class="blockquote text-center">
+        <h1>Редактирование информации о технике</h1>
+    </blockquote>
+    <div class="row">
+        <div class="col-md-8 offset-md-4">
+            <form th:action="@{/save}" th:object="${machine}" method="post">
+                <table>
+                    <tr>
+                        <td>ID техники:</td>
+                        <td><input type="text" th:field="*{id}" readonly="readonly"></td>
+                    </tr>
+                    <tr>
+                        <td>Вид техники:</td>
+                        <td><input type="text" th:field="*{equipmentType}"></td>
+                    </tr>
+                    <tr>
+                        <td>Группа техники:</td>
+                        <td><input type="text" th:field="*{equipmentGroup}"></td>
+                    </tr>
+                    <tr>
+                        <td>Дата ввоза на склад:</td>
+                        <td><input type="text" th:field="*{importDate}" placeholder="YYYY-MM-DD HH:mm"></td>
+                    </tr>
+                    <tr>
+                        <td>Дата вывоза со склада:</td>
+                        <td><input type="text" th:field="*{exportDate}" placeholder="YYYY-MM-DD HH:mm"></td>
+                    </tr>
+                    <tr>
+                        <td>ФИО водителя:</td>
+                        <td><input type="text" th:field="*{driverFullName}"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <button type="submit" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">Отправить</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
