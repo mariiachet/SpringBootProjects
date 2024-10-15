@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Управление сеансами</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+<div class="container-fluid p-5 bg-gradient bg-secondary" style="min-height: 100vh; overflow: auto; --bs-bg-opacity: .5;">
+  <blockquote class="blockquote text-center">
+    <h1 class="display-4">Сеансы</h1>
+  </blockquote>
+
+  <!-- Карточка поиска -->
+  <div class="row justify-content-center my-4">
+    <div class="col-md-8">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h4 class="text-center mb-4">Поиск сеанса по любому критерию</h4>
+          <form th:action="@{/}" onsubmit="setDefaultKeyword()" class="d-flex flex-column gap-3">
+            <div class="input-group">
+              <input type="text" name="keyword" id="keyword" class="form-control" th:value="${keyword}" placeholder="Введите ключевое слово" />
+              <button type="submit" class="btn btn-success">Поиск</button>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+              <button type="button" class="btn btn-warning" id="btnClear" onclick="clearSearch()">Очистить</button>
+              <div class="d-flex gap-3">
+                <div class="d-flex align-items-center gap-2">
+                  <label for="sortField" class="form-label m-0">Сортировка по:</label>
+                  <select id="sortField" name="sortField" class="form-select">
+                    <option value="">Нет</option>
+                    <option value="movieTitle">Фильму</option>
+                    <option value="studio">Киностудии</option>
+                    <option value="sessionDateTime">Дате и времени сеанса</option>
+                    <option value="ticketCount">Количеству билетов</option>
+                  </select>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <label for="sortOrder" class="form-label m-0">Вид сортировки:</label>
+                  <select id="sortOrder" name="sortOrder" class="form-select">
+                    <option value="asc">По возрастанию</option>
+                    <option value="desc">По убыванию</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table id="SeanceTable" class="table table-striped table-hover table-bordered text-center table-light">
+      <thead class="thead-light">
+      <tr>
+        <th scope="col">ID сеанса</th>
+        <th scope="col">Название фильма</th>
+        <th scope="col">Киностудия</th>
+        <th scope="col">Дата и время сеанса</th>
+        <th scope="col">Количество билетов</th>
+        <th scope="col">Действия</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="Seance: ${listSeances}">
+        <th scope="row" th:text="${Seance.id}">ID сеанса отсутствует</th>
+        <td th:text="${Seance.movieTitle}">Название фильма отсутствует</td>
+        <td th:text="${Seance.studio}">Киностудия отсутствует</td>
+        <td th:text="${Seance.sessionDateTime}">Дата и время сеанса отсутствует</td>
+        <td th:text="${Seance.ticketCount}">Количество билетов отсутствует</td>
+        <td>
+          <a th:href="@{'/edit/'+${Seance.id}}"><button type="button" class="btn btn-info btn-sm">Редактировать</button></a>
+          <a th:href="@{'/delete/'+${Seance.id}}"><button type="button" class="btn btn-danger btn-sm">Удалить</button></a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="text-white mx-auto mb-3 align-content-center text-lg-center">
+    <script type="text/javascript">
+      function getNum() {
+        let table = document.getElementById('SeanceTable')
+        let tBody = table.querySelector('tbody')
+        const count = tBody.querySelectorAll('tr').length;
+        document.write('Количество сеансов в таблице: ' + count)
+      }
+      getNum()
+    </script>
+  </div>
+
+  <!-- Кнопка для добавления сеанса -->
+  <blockquote class="blockquote text-center mb-5">
+    <a href="/new">
+      <button type="button" class="btn btn-primary btn-lg" aria-pressed="false">
+        Добавить сеанс
+      </button>
+    </a>
+  </blockquote>
+
+  <!-- график -->
+  <div class="d-flex justify-content-center mt-5">
+    <div class="bg-white" style="width: 70%; height: 30vh; padding: 10px;">
+      <canvas id="myChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+  function clearSearch() {
+    window.location = "[[@{/}]]";
+  }
+  function setDefaultKeyword() {
+    let keyword = document.getElementById('keyword').value;
+    if (!keyword) {
+      document.getElementById('keyword').value = ""; // значение по умолчанию
+    }
+  }
+  function getRowsColumn() {
+    let table = document.getElementById('SeanceTable');
+    let tBody = table.querySelector('tbody');
+    const rows = tBody.querySelectorAll('tr');
+
+    const countByDate = {};
+    rows.forEach(row => {
+      const date = row.cells[3].textContent;
+      if (date) {
+        countByDate[date] = (countByDate[date] || 0) + 1;
+      }
+    });
+
+    return countByDate;
+  }
+  function renderChart(data) {
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const sortedData = Object.entries(data).sort((a, b) => new Date(a[0]) - new Date(b[0]));
+    const labels = sortedData.map(entry => entry[0]);
+    const counts = sortedData.map(entry => entry[1]);
+    const myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Количество сеансов',
+          data: counts,
+          backgroundColor: 'rgba(0, 123, 255, 0.6)', // Синий
+          borderColor: 'rgba(0, 123, 255, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
+  const countByDate = getRowsColumn();
+  renderChart(countByDate);
+</script>
+</body>
+</html>
